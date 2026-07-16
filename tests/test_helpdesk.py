@@ -71,6 +71,29 @@ def test_required_frontend_pages_render_their_page_specific_content():
         assert f"<h1>{heading}</h1>" in response.text
 
 
+def test_frontend_ticket_form_creates_ticket_and_redirects_to_detail():
+    c = client()
+
+    response = c.post(
+        "/tickets/new",
+        data={
+            "title": "Cannot access virtual campus",
+            "description": "The student cannot access the virtual campus with current credentials.",
+            "category": "Access",
+            "priority": "High",
+        },
+        follow_redirects=False,
+    )
+
+    assert response.status_code == 303
+    location = response.headers.get("location")
+    assert location is not None
+    assert location.startswith("/tickets/")
+    detail = c.get(location)
+    assert detail.status_code == 200
+    assert "Cannot access virtual campus" in detail.text
+
+
 def test_dashboard_catalogs_and_web_pages():
     c = client()
     admin = login(c, "admin@example.com", "admin123")

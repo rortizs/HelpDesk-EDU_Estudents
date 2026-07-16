@@ -1,1 +1,45 @@
-{% extends 'base.html' %}{% block content %}<h1>New HelpDesk EDU ticket</h1><form><input class="form-control mb-2" placeholder="Title"><textarea class="form-control" placeholder="Describe the issue"></textarea><select class="form-select mt-2"><option>Medium</option><option>High</option></select><button class="btn btn-primary mt-3">Submit</button></form>{% endblock %}
+{% extends 'base.html' %} {% block content %}
+<h1>New HelpDesk EDU ticket</h1>
+<p class="text-muted">
+  This classroom form creates a ticket as the demo requester account.
+</p>
+<form method="post" action="/tickets/new">
+  <label class="form-label" for="title">Title</label>
+  <input
+    id="title"
+    name="title"
+    class="form-control mb-2"
+    placeholder="Title"
+    required
+    minlength="3"
+  />
+
+  <label class="form-label" for="description">Description</label>
+  <textarea
+    id="description"
+    name="description"
+    class="form-control"
+    placeholder="Describe the issue"
+    required
+  ></textarea>
+
+  <label class="form-label mt-2" for="category">Category</label>
+  <select id="category" name="category" class="form-select">
+    <option>General</option>
+    <option>Access</option>
+    <option>Hardware</option>
+    <option>Software</option>
+    <option>Network</option>
+  </select>
+
+  <label class="form-label mt-2" for="priority">Priority</label>
+  <select id="priority" name="priority" class="form-select">
+    <option>Low</option>
+    <option selected>Medium</option>
+    <option>High</option>
+    <option>Critical</option>
+  </select>
+
+  <button class="btn btn-primary mt-3" type="submit">Submit</button>
+</form>
+{% endblock %}

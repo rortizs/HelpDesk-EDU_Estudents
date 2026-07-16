@@ -1,1 +1,30 @@
-{% extends 'base.html' %}{% block content %}<h1>HelpDesk EDU Ticket #{{ ticket_id }}</h1><h2>Comments</h2><textarea class="form-control" placeholder="Add a comment"></textarea><h2 class="mt-4">History</h2><p>Assignment and authorized status controls are available through the API.</p>{% endblock %}
+{% extends 'base.html' %} {% block content %}
+<h1>HelpDesk EDU Ticket #{{ ticket_id }}</h1>
+{% if ticket %}
+<section class="card mb-4">
+  <div class="card-body">
+    <h2 class="h4">{{ ticket.title }}</h2>
+    <p>{{ ticket.description }}</p>
+    <dl class="row">
+      <dt class="col-sm-3">Category</dt>
+      <dd class="col-sm-9">{{ ticket.category }}</dd>
+      <dt class="col-sm-3">Priority</dt>
+      <dd class="col-sm-9">{{ ticket.priority }}</dd>
+      <dt class="col-sm-3">Status</dt>
+      <dd class="col-sm-9">{{ ticket.status }}</dd>
+      <dt class="col-sm-3">Requester</dt>
+      <dd class="col-sm-9">{{ ticket.requester }}</dd>
+    </dl>
+  </div>
+</section>
+{% else %}
+<p class="alert alert-warning">
+  Ticket data is not available in the demo web session. Use the API for
+  authenticated detail access.
+</p>
+{% endif %}
+<h2>Comments</h2>
+<textarea class="form-control" placeholder="Add a comment"></textarea>
+<h2 class="mt-4">History</h2>
+<p>Assignment and authorized status controls are available through the API.</p>
+{% endblock %}
