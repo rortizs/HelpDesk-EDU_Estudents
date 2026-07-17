@@ -1,1 +1,15 @@
-{% extends 'base.html' %}{% block content %}<h1>HelpDesk EDU login</h1><p>Use one of the documented demo accounts, then use the JSON API bearer token.</p><form><label>Email <input class="form-control" type="email"></label><label>Password <input class="form-control" type="password"></label><button class="btn btn-primary mt-3">Sign in</button></form>{% endblock %}
+{% extends 'base.html' %}
+{% block content %}
+<h1>HelpDesk EDU login</h1>
+<p>Use one of the documented demo accounts to access the classroom dashboard.</p>
+{% if error %}<div class="alert alert-danger">{{ error }}</div>{% endif %}
+<form method="post" action="/login">
+  <label class="form-label" for="email">Email</label>
+  <input id="email" name="email" class="form-control" type="email" required>
+
+  <label class="form-label mt-2" for="password">Password</label>
+  <input id="password" name="password" class="form-control" type="password" required>
+
+  <button class="btn btn-primary mt-3" type="submit">Sign in</button>
+</form>
+{% endblock %}

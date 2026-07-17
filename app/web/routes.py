@@ -3,22 +3,48 @@ from fastapi import APIRouter, Form, HTTPException, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 
+from app.core.security import decode_access_token
 from app.repositories.users import UserRepository
 from app.schemas.tickets import TicketIn
+from app.services.auth import AuthService
 from app.services.tickets import TicketService
 
 router = APIRouter()
 templates = Jinja2Templates(directory="app/web/templates")
 
 
+def _current_web_user(request: Request):
+    token = request.cookies.get("helpdesk_token")
+    if not token:
+        return None
+    try:
+        email = decode_access_token(token)["sub"]
+    except (KeyError, ValueError):
+        return None
+    with request.app.state.session_factory() as db:
+        return UserRepository(db).by_email(email)
+
+
 @router.get("/login", response_class=HTMLResponse)
 def login_page(request: Request):
-    return templates.TemplateResponse(request, "login.html", {"title": "Login"})
+    return templates.TemplateResponse(request, "login.html", {"title": "Login", "error": None})
+
+
+@router.post("/login")
+def login_submit(request: Request, email: str = Form(...), password: str = Form(...)):
+    with request.app.state.session_factory() as db:
+        user = AuthService(db).authenticate(email, password)
+        if user is None:
+            return templates.TemplateResponse(request, "login.html", {"title": "Login", "error": "Invalid credentials"}, status_code=401)
+        token = AuthService(db).token_for(user)["access_token"]
+    response = RedirectResponse(url="/", status_code=303)
+    response.set_cookie("helpdesk_token", token, httponly=True, samesite="lax")
+    return response
 
 
 @router.get("/", response_class=HTMLResponse)
 def home(request: Request):
-    return templates.TemplateResponse(request, "dashboard.html", {"title": "Dashboard"})
+    return templates.TemplateResponse(request, "dashboard.html", {"title": "Dashboard", "user": _current_web_user(request)})
 
 
 @router.get("/tickets", response_class=HTMLResponse)

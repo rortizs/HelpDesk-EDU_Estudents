@@ -94,6 +94,24 @@ def test_frontend_ticket_form_creates_ticket_and_redirects_to_detail():
     assert "Cannot access virtual campus" in detail.text
 
 
+def test_frontend_login_sets_cookie_and_dashboard_shows_current_user():
+    c = client()
+
+    response = c.post(
+        "/login",
+        data={"email": "admin@example.com", "password": "admin123"},
+        follow_redirects=False,
+    )
+
+    assert response.status_code == 303
+    assert response.headers.get("location") == "/"
+    assert "helpdesk_token=" in response.headers.get("set-cookie", "")
+    dashboard = c.get("/")
+    assert dashboard.status_code == 200
+    assert "Signed in as Admin" in dashboard.text
+    assert "administrator" in dashboard.text
+
+
 def test_dashboard_catalogs_and_web_pages():
     c = client()
     admin = login(c, "admin@example.com", "admin123")

@@ -1,1 +1,15 @@
-{% extends 'base.html' %}{% block content %}<h1>HelpDesk EDU Dashboard</h1><p>Track ticket status, priorities, SLA alerts, categories, and technician workload.</p><div class="alert alert-info">Sign in through <code>/api/auth/login</code> to access dashboard data.</div>{% endblock %}
+{% extends 'base.html' %}
+{% block content %}
+<h1>HelpDesk EDU Dashboard</h1>
+<p>Track ticket status, priorities, SLA alerts, categories, and technician workload.</p>
+{% if user %}
+<div class="alert alert-success">
+  Signed in as {{ user.name }} <span class="badge bg-primary">{{ user.role }}</span>
+</div>
+<p>Use the navigation to create tickets, review notifications, and explore the knowledge base.</p>
+{% else %}
+<div class="alert alert-info">
+  Sign in through the <a href="/login">web login form</a> or use <code>POST /api/auth/login</code> for API clients.
+</div>
+{% endif %}
+{% endblock %}
